@@ -5,7 +5,7 @@ import subprocess
 from toggl import api
 
 
-input_regex = r"(?P<desc>[^\@]*) \s* (?:\@(?P<proj>[^\#]*)) \s* (?P<tags>\#.*)"
+input_regex = r"(?P<desc>[^\@]*) \s* (?:\@(?P<proj>[^\#]*)) \s* (?P<tags>\#.*)?"
 
 
 tags = None
@@ -111,12 +111,15 @@ def parse_input_fields(userstr):
     if match:
         description = match['desc'].strip()
         pname = match['proj'].strip().lower()
-        tagstr = match['tags'].strip('# ')
 
         project = pname_map.get(pname, None)
-        init_tags()
-        tags = [tag_map.get(tag.strip().lower(), None) for tag in tagstr.split('#')]
-        tags = [tag.name for tag in tags if tag]
+        if match['tags']:
+            tagstr = match['tags'].strip('# ')
+            init_tags()
+            tags = [tag_map.get(tag.strip().lower(), None) for tag in tagstr.split('#')]
+            tags = [tag.name for tag in tags if tag]
+        else:
+            tags = []
 
         return {
             "description": description,
