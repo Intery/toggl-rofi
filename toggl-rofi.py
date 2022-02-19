@@ -53,7 +53,7 @@ def format_entries(entry_list):
     for i, entry in enumerate(reversed(entry_list)):
         i = len(entry_list) - i - 1
         desc = pango_escape(entry.description or "No description")
-        pname, pcolour = pnames.get(entry.pid, (None, None))
+        pname, pcolour = pnames.get(entry.pid) if hasattr(entry, 'pid') else ("None", "#000000")
         esc_pname = pango_escape(pname)
         p_field = project_field + (len(esc_pname) - len(pname))
 
