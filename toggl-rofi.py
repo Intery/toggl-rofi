@@ -86,10 +86,13 @@ def format_entries(entry_list):
     return list(reversed(entry_strs))
 
 
-def dialog(prompt, options, header="", join_char='\n', filter=""):
+def dialog(prompt, options, header="", join_char='\n', filter="", keys=[]):
     args = ['rofi', '-dmenu', '-i', '-p', prompt, '-filter', filter, '-format', 's', '-markup-rows', '-matching fuzzy']
     if header:
         args.extend(['-mesg', header])
+    if keys:
+        for i, k in enumerate(keys):
+            args.extend((f"-kb-custom-{i+1}", k))
 
     option_str = join_char.join(options)
     code, stdout = run_blocking(args, input=option_str)
@@ -131,23 +134,24 @@ def parse_input_fields(userstr):
 if __name__ == "__main__":
     entries = api.TimeEntry.objects.all(order='start')
     formatted = format_entries(entries)
-    code, stdout = dialog("Entry", formatted)
-    if code == 0:
-        if stdout.startswith('<span color'):
-            index = int(stdout.partition('>')[2].partition('<')[0].strip(' .'))
-            entry = entries[index]
-            if entry.is_running:
-                entry.stop_and_save()
-            else:
-                # entry.continue_and_save()
-                entry_str = entry_to_input(entry)
-                code, stdout = dialog("Edit and Start", "", filter=entry_str)
-                if code == 0:
-                    args = parse_input_fields(stdout)
-                    entry = api.TimeEntry.start_and_save(**args)
-                    print(entry_to_input(entry))
-        else:
-            args = parse_input_fields(stdout)
-            entry = api.TimeEntry.start_and_save(**args)
-            print(entry_to_input(entry))
+    code, stdout = dialog("Entry", formatted, keys=["Alt+Return"])
+    if stdout.startswith('<span color'):
+        index = int(stdout.partition('>')[2].partition('<')[0].strip(' .'))
+        entry = entries[index]
+        if entry.is_running:
+            entry.stop_and_save()
+        elif code == 0:
+            entry.continue_and_save()
+        elif code == 10:
+            # entry.continue_and_save()
+            entry_str = entry_to_input(entry)
+            code, stdout = dialog("Edit and Start", "", filter=entry_str)
+            if code == 0:
+                args = parse_input_fields(stdout)
+                entry = api.TimeEntry.start_and_save(**args)
+                print(entry_to_input(entry))
+    else:
+        args = parse_input_fields(stdout)
+        entry = api.TimeEntry.start_and_save(**args)
+        print(entry_to_input(entry))
     print(code, stdout)
