@@ -1,7 +1,10 @@
 #!/bin/python3
 import re
 import subprocess
+import datetime
+from collections import defaultdict
 
+import pendulum
 from toggl import api
 
 
@@ -45,8 +48,11 @@ def pango_escape(str):
 
 def format_entries(entry_list):
     max_desc = max(len(entry.description) for entry in entries)
-    max_project = 20
-    project_field = max_project + 10
+    max_project = max(
+        len(pnames.get(entry.pid)[0] if hasattr(entry, 'pid') else "None")
+        for entry in entry_list
+    )
+    project_field = max_project + 5
 
     dates = set()
     entry_strs = []
@@ -131,10 +137,30 @@ def parse_input_fields(userstr):
         }
 
 
+def gen_header(entries):
+    proj_times = defaultdict(int)
+    for entry in entries:
+        if entry.start < pendulum.today():
+            break
+        proj_times[entry.pid if hasattr(entry, "pid") else 0] += entry.duration
+
+    lines = []
+    for pid, dur in sorted(list(proj_times.items()), key=lambda p: p[1], reverse=True):
+        pname, pcolour = pnames.get(pid, ("No Project", "#000000"))
+        esc_pname = pango_escape(pname)
+        pname_col = f"<span color=\"{pcolour}\">{esc_pname}</span>"
+
+        dur_str = api.models.format_duration(dur)
+        dur_str = ':'.join(dur_str.split(':')[:2])
+        lines.append(f"<b>{dur_str}</b> -- {pname_col}")
+    return '\n'.join(lines)
+
+
 if __name__ == "__main__":
     entries = api.TimeEntry.objects.all(order='start')
     formatted = format_entries(entries)
-    code, stdout = dialog("Entry", formatted, keys=["Alt+Return"])
+    header = gen_header(entries)
+    code, stdout = dialog("Entry", formatted, header=header, keys=["Alt+Return"])
     if stdout.startswith('<span color'):
         index = int(stdout.partition('>')[2].partition('<')[0].strip(' .'))
         entry = entries[index]
