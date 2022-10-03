@@ -8,6 +8,7 @@ import pendulum
 from toggl import api
 
 
+
 input_regex = r"(?P<desc>[^\@]*) \s* (?:\@(?P<proj>[^\#]*)) \s* (?P<tags>\#.*)?"
 
 
@@ -16,6 +17,7 @@ tag_map = None
 projects = api.Project.objects.all()
 pnames = {project.id: (project.name, project.hex_color) for project in projects}
 pname_map = {project.name.lower(): project for project in projects}
+tz = api.User.objects.current_user().timezone
 
 
 def init_tags():
@@ -63,14 +65,14 @@ def format_entries(entry_list):
         esc_pname = pango_escape(pname)
         p_field = project_field + (len(esc_pname) - len(pname))
 
-        date_str = entry.start.to_date_string()
+        date_str = entry.start.in_tz(tz).to_date_string()
         if date_str not in dates:
             dates.add(date_str)
         else:
             date_str = ""
 
-        start_str = entry.start.strftime("%H:%M")
-        stop_str = entry.stop.strftime("%H:%M") if not entry.is_running else 'NOW  '
+        start_str = entry.start.in_tz(tz).strftime("%H:%M")
+        stop_str = entry.stop.in_tz(tz).strftime("%H:%M") if not entry.is_running else 'NOW  '
         dur = api.models.format_duration(entry.duration)
         dur_str = ':'.join(dur.split(':')[:2])
 
@@ -140,7 +142,7 @@ def parse_input_fields(userstr):
 def gen_header(entries):
     proj_times = defaultdict(int)
     for entry in entries:
-        if entry.start < pendulum.today():
+        if entry.start < pendulum.today(tz):
             break
         proj_times[entry.pid if hasattr(entry, "pid") else 0] += entry.duration
 
