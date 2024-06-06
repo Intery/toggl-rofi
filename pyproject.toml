@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "toggl-rofi"
+version = "0.1.0"
+description = "Rofi UI for the Toggl API"
+authors = ["Interitio <cona@thewisewolf.dev>"]
+readme = "README.md"
+packages = [{include = "toggl_rofi"}]
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+togglCli = "^2.4.4"
+python-rofi = "^1.0.1"
+
+[tool.poetry.scripts]
+toggl-rofi = "toggl_rofi.toggl_rofi:main"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

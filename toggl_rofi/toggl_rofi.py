@@ -49,7 +49,7 @@ def pango_escape(str):
 
 
 def format_entries(entry_list):
-    max_desc = max(len(entry.description) for entry in entries)
+    max_desc = max(len(entry.description) for entry in entry_list)
     max_project = max(
         len(pnames.get(entry.pid)[0] if hasattr(entry, 'pid') else "None")
         for entry in entry_list
@@ -158,7 +158,7 @@ def gen_header(entries):
     return '\n'.join(lines)
 
 
-if __name__ == "__main__":
+def main():
     entries = api.TimeEntry.objects.all(order='start')
     formatted = format_entries(entries)
     header = gen_header(entries)
@@ -183,3 +183,7 @@ if __name__ == "__main__":
         entry = api.TimeEntry.start_and_save(**args)
         print(entry_to_input(entry))
     print(code, stdout)
+
+
+if __name__ == "__main__":
+    main()
