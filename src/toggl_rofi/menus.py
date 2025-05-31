@@ -67,9 +67,9 @@ class TrackMenu(Menu):
     Keys = Enum('TrackMenuKeys', ('EDIT', 'HELP', 'REFRESH'))
     keys = list(Keys)
     default_keymap = {
-        Keys.EDIT: 'Alt+Meta+Return',
-        Keys.HELP: 'Alt+Meta+h',
-        Keys.REFRESH: 'Alt+Meta+r',
+        Keys.EDIT: 'Alt+Return',
+        Keys.HELP: 'Alt+h',
+        Keys.REFRESH: 'Alt+r',
     }
 
     def __init__(self, client: RofiTrackClient, keymap={}, **kwargs):
