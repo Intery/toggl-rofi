@@ -11,6 +11,7 @@ version = "0.2.0a1"
 dependencies = [
   "tomllib",
   "toggl.py @ git+ssh://git@github.com/Intery/toggl.py",
+  "platformdirs"
 ]
 requires-python = ">= 3.10"
 
