@@ -1,20 +1,19 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "toggl-rofi"
-version = "0.1.0"
-description = "Rofi UI for the Toggl API"
+description = "Rofi UI for the Toggl Track API"
 authors = ["Interitio <cona@thewisewolf.dev>"]
 readme = "README.md"
-packages = [{include = "toggl_rofi"}]
+version = "0.2.0a1"
+dependencies = [
+  "tomllib",
+  "toggl.py @ git+ssh://git@github.com/Intery/toggl.py",
+]
+requires-python = ">= 3.10"
 
-[tool.poetry.dependencies]
-python = ">=3.7"
-togglCli = "^2.4.4"
-python-rofi = "^1.0.1"
+[project.optional-dependencies]
+debug = []
 
-[tool.poetry.scripts]
-toggl-rofi = "toggl_rofi.toggl_rofi:main"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

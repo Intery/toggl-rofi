@@ -1,2 +1,3 @@
-togglCli
-python-rofi
+toggl.py @ git+ssh://git@github.com/Intery/toggl.py
+pytz
+pendulum
