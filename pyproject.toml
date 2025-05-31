@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "toggl-rofi"
 description = "Rofi UI for the Toggl Track API"
-authors = ["Interitio <cona@thewisewolf.dev>"]
+authors = [{name="Interitio", email="cona@thewisewolf.dev"}]
 readme = "README.md"
 version = "0.2.0a1"
 dependencies = [
-  "tomllib",
+  "pytz",
   "toggl.py @ git+ssh://git@github.com/Intery/toggl.py",
   "platformdirs"
 ]
@@ -17,4 +17,7 @@ requires-python = ">= 3.10"
 
 [project.optional-dependencies]
 debug = []
+
+[project.scripts]
+toggl-rofi = "toggl_rofi:run"
 

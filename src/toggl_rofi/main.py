@@ -2,10 +2,11 @@ import asyncio
 import logging
 import toml
 import os
-from client import RofiTrackClient
-from menus import TrackMenu
-from rofi import Menu
 from platformdirs import PlatformDirs
+
+from .client import RofiTrackClient
+from .menus import TrackMenu
+from .rofi import Menu
 
 
 logging.getLogger(__name__).setLevel(logging.DEBUG)
@@ -50,6 +51,10 @@ async def main():
 
 
     await client.http.session.close()
+
+
+def run():
+    asyncio.run(main())
 
 
 if __name__ == '__main__':

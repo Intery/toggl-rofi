@@ -24,9 +24,9 @@ for creation...
 """
 from toggl_track.lib import utc_now
 
-from client import RofiTrackClient, ParsedEntry
-from rofi import MenuItem, Menu
-from lib import pango_escape
+from .client import RofiTrackClient, ParsedEntry
+from .rofi import MenuItem, Menu
+from .lib import pango_escape
 
 
 class EditMenu(Menu):

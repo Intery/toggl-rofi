@@ -10,10 +10,11 @@ from operator import itemgetter
 import pytz
 from toggl_track import Optional, TimeEntry
 from toggl_track.lib import utc_now
-from client import ParsedEntry, RofiTrackClient
-from rofi import MenuItem, Menu
-from lib import format_duration, pango_escape
-from editor import EditMenu
+
+from .client import ParsedEntry, RofiTrackClient
+from .rofi import MenuItem, Menu
+from .lib import format_duration, pango_escape
+from .editor import EditMenu
 
 
 class EntryItem(MenuItem):
